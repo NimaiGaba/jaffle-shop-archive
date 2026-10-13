@@ -1,0 +1,32 @@
+name: CI / Lint & Validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-validate:
+    name: Lint SQL and Validate Models
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Linting & dbt Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install sqlfluff sqlfluff-templater-dbt
+
+      - name: Run SQLFluff Lint
+        run: |
+          sqlfluff lint models/ --dialect duckdb
